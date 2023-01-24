@@ -83,25 +83,11 @@ LIMIT 5;
 # 7. Is "Academy Dinosaur" available for rent from Store 1?
 SELECT 
     f.title,
+    inventory_id,
     (CASE
         WHEN COUNT(r.return_date) = COUNT(r.rental_date) THEN 1
         ELSE 0
      END) AS available
-FROM
-    inventory
-        JOIN
-    store AS s USING (store_id)
-        JOIN
-    film AS f USING (film_id)
-        JOIN
-    rental AS r USING (inventory_id)
-WHERE
-    f.title = 'ACADEMY DINOSAUR'
-        AND s.store_id = 1
-GROUP BY f.title;
-
-SELECT 
-    f.title, COUNT(i.inventory_id)
 FROM
     inventory AS i
         JOIN
@@ -113,4 +99,18 @@ FROM
 WHERE
     f.title = 'ACADEMY DINOSAUR'
         AND s.store_id = 1
-GROUP BY f.title;
+GROUP BY i.inventory_id;
+
+SELECT 
+    f.title, s.store_id, i.inventory_id, r.rental_date, r.return_date
+FROM
+    inventory AS i
+        LEFT JOIN
+    store AS s USING (store_id)
+        LEFT JOIN
+    film AS f USING (film_id)
+        JOIN
+    rental AS r USING (inventory_id)
+WHERE
+    f.title = 'ACADEMY DINOSAUR'
+        AND s.store_id = 1;
